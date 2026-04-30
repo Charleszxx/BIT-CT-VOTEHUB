@@ -26,8 +26,8 @@ const db = admin.database();
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "votehubbitct@gmail.com",
-        pass: "mxvsbsaldzipbzva" 
+        user: "mendozahanskiervey@gmail.com",
+        pass: "gdkllkmaqrclvqcl" 
     },
     tls: {
         rejectUnauthorized: false
