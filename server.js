@@ -1,9 +1,12 @@
 require("dns").setDefaultResultOrder("ipv4first");
+
 const nodemailer = require("nodemailer");
 const express = require("express");
 const cors = require("cors");
 const QRCode = require("qrcode");
 const admin = require("firebase-admin");
+
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -27,11 +30,13 @@ const db = admin.database();
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
-    family: 4,
+    secure: false, // IMPORTANT: use STARTTLS not SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
