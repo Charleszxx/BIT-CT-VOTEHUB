@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static("public"));
+require("dns").setDefaultResultOrder("ipv4first");
 
 const otpStore = {};
 
@@ -30,7 +31,10 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
 });
 
 app.post("/api/forgot-password-otp", async (req, res) => {
@@ -104,8 +108,11 @@ async function sendEmailOTP(to, otp) {
             `
         };
 
+        console.log("[!] About to send email to:", to);
+
         const info = await transporter.sendMail(mailOptions);
-        console.log("Modern OTP Email sent:", info.response);
+
+        console.log("Email sent:", info.response);
         return true;
     } catch (err) {
         console.error("Email failed:", err.message);
@@ -384,17 +391,28 @@ app.post("/api/success-email", async (req, res) => {
 });
 
 app.post("/api/get-otp", async (req, res) => {
-    const { email, otp } = req.body; 
+    const { email, otp } = req.body;
 
     if (!email || !otp) {
         return res.status(400).json({ message: "Email and OTP are required" });
     }
 
     try {
+        console.log("📨 Sending OTP to:", email);
+
         await sendEmailOTP(email, otp);
+
+        console.log("✅ Email sent");
+
         res.status(200).json({ message: "OTP sent successfully" });
+
     } catch (error) {
-        res.status(500).json({ message: "Failed to send email" });
+        console.error("❌ Email error:", error);
+
+        res.status(500).json({
+            message: "Failed to send email",
+            error: error.message
+        });
     }
 });
 
