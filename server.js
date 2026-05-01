@@ -1,3 +1,4 @@
+require("dns").setDefaultResultOrder("ipv4first");
 const nodemailer = require("nodemailer");
 const express = require("express");
 const cors = require("cors");
@@ -9,7 +10,6 @@ app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.static("public"));
-require("dns").setDefaultResultOrder("ipv4first");
 
 const otpStore = {};
 
@@ -26,16 +26,18 @@ const db = admin.database();
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
     family: 4,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000
+    }
+});
+
+transporter.verify((err, success) => {
+    if (err) console.error("SMTP FAIL:", err);
+    else console.log("SMTP READY");
 });
 
 app.post("/api/forgot-password-otp", async (req, res) => {
