@@ -18,7 +18,7 @@ const serviceAccount = JSON.parse(
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://vote-app-group-six-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  databaseURL: process.env.FB_DATABASE_URL
 });
 
 const db = admin.database();
@@ -26,8 +26,8 @@ const db = admin.database();
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "mendozahanskiervey@gmail.com",
-        pass: "fhbfnvncpwtyizzr" 
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     },
     tls: {
         rejectUnauthorized: false
