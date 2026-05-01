@@ -38,6 +38,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER ? "OK" : "MISSING");
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "OK" : "MISSING");
+
 transporter.verify((err, success) => {
     if (err) console.error("SMTP FAIL:", err);
     else console.log("SMTP READY");
