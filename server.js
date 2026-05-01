@@ -26,17 +26,13 @@ admin.initializeApp({
 const db = admin.database();
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
+    service: "gmail",
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
     tls: {
-        rejectUnauthorized: false,
-        family: 4   // 🔥 FORCE IPv4
+        rejectUnauthorized: false
     }
 });
 
